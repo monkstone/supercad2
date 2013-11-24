@@ -1,4 +1,4 @@
-package superCAD;
+package supercad2;
 
 /**
  * superCAD by Guillaume LaBelle (gll@spacekit.ca)

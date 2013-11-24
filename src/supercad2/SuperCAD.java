@@ -1,4 +1,4 @@
-package superCAD;
+package supercad2;
 
 import processing.core.PApplet;
 
@@ -238,15 +238,15 @@ public class SuperCAD {
     formats();
   }
   
-//  /** throws cast exception if not Raw type */
-//  static protected Raw getCurrentRecorder(){
-//    return raw;
-//  }
+
   
-  /** Create a new layer (if implemented in the export format) */
+  /** Create a new layer (if implemented in the export format)
+     * @param layerName 
+     * return raw
+     */
   static public void newLayer(String layerName){
-    if(isRecording())
-      raw.newLayer(layerName);
+    if(isRecording()){}
+    //  raw.newLayer(layerName);
   }
 
 }
