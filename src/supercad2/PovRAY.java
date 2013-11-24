@@ -52,6 +52,12 @@ public class PovRAY extends Raw {
     return "<"+toStringComa(vertex)+">";
   }   
 
+    /**
+     *
+     * @param vertex
+     * @return
+     */
+    @Override
   protected String toStringComa(float[] vertex){
     return (float)(vertex[X])+","+(float)(-vertex[Y])+","+(float)(-vertex[Z]);
   }
@@ -129,15 +135,15 @@ public class PovRAY extends Raw {
     writer.println("//  ------------------------------------------------------------");
     writer.println("");
     writer.println("#declare Camera_0 = camera {perspective angle 60\t  // front view");
-    String location = "\t\t\t\tlocation  <0.0 , 200.0 ,%f>";
-    writer.println(String.format(location, (height/2.0) / Math.tan(PI*30.0 / 180.0)));
+    String location = "\t\t\t\tlocation  <0.0, 0.0 , %.3f>";
+    writer.println(String.format(location, (-height / 2.0) / Math.tan(PI * 30.0 / 180.0)));
     //writer.println("\t\t\t\tlocation  <0.0 , 200.0 ,-600.0>");
     String right = "\t\t\t\tright\t x * %.4f";
     writer.println(String.format(right, (float)width / height));
     //writer.println("\t\t\t\tright\t x*image_width/image_height");
-    writer.println("\t\t\t\tlook_at   <0.0 , 0.4 , 0.0>}");
+    writer.println("\t\t\t\tlook_at   <0.0, 0.0, 0.0>}");
     writer.println("#declare Camera_1 = camera {ultra_wide_angle angle 90\t   // diagonal view");
-    writer.println("\t\t\t\tlocation  <200.0 , 200.5 ,-300.0>");
+    writer.println("\t\t\t\tlocation  <200.0, 200.5,-300.0>");
     writer.println("\t\t\t\tright\t x*image_width/image_height");
     writer.println("\t\t\t\tlook_at   <0.0 , 1.0 , 0.0>}");
     writer.println("#declare Camera_2 = camera {ultra_wide_angle angle 90\t  //right side view");

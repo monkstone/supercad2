@@ -17,7 +17,7 @@ public class FTest extends PApplet {
 
     @Override
     public void setup() {
-        size(320, 180, P3D);
+        size(800, 600, P3D);
     }
 
     @Override
@@ -52,21 +52,22 @@ public class FTest extends PApplet {
         return result;
     }
 
-  public void fTest() {  // encapsulate initial processing sketch in a function
-  translate(width/2, height*0.7f, -width/4);
-  fill(255, 0, 0);
-  box(50);
-  translate(0, -50, 0);
-  box(50);
-  translate(50, 0, 0);
- box(50);
-     translate(-50, -50, 0);
-     box(50);
-     translate(0, -50, 0);  
-     box(50);
-     translate(50, 0, 0);
-     box(50);
-   }
+    public void fTest() {  // encapsulate initial processing sketch in a function
+        translate(width / 2, height / 2, -width / 3);
+        fill(255, 0, 0);
+        translate(0, -60, 0);      
+        box(120);
+        translate(0, -120, 0);
+        box(120);
+        translate(120, 0, 0);
+        box(120);
+        translate(-120, -120, 0);
+        box(120);
+        translate(0, -120, 0);
+        box(120);
+        translate(120, 0, 0);
+        box(120);
+    }
 
     @Override
     public void keyPressed() {

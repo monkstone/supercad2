@@ -14,8 +14,8 @@ public enum Mode {
     POVRAY("PovRAY", "pov"),
     RHINO("Rhino", "rvb"),
     SKETCH_UP("SketchUP", "rb");
-    String className;
-    String ext;
+    public String className;
+    public String ext;
 
     Mode(String className, String ext) {
         this.className = className;
