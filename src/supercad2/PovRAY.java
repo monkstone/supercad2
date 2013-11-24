@@ -53,17 +53,11 @@ public class PovRAY extends Raw {
   }   
 
   protected String toStringComa(float[] vertex){
-    return (float)(vertex[X]+fuzz())+","+(float)(vertex[Y]+fuzz())+","+(float)(vertex[Z]+fuzz());
+    return (float)(vertex[X])+","+(float)(-vertex[Y])+","+(float)(-vertex[Z]);
   }
   
   
-  //Avoid colinear points from p5
-  //POVRAY COMPLAIN ABOUT THIS
-  double fuzzer = 0;
-  private double fuzz(){
-    fuzzer += Math.random()*0.001d;
-    return fuzzer;
-  }
+
   
   /* (non-Javadoc)
    * @see superCAD.Raw#writeTriangle()
@@ -83,10 +77,10 @@ public class PovRAY extends Raw {
   private void writeDirtyHeader(){
     writer.println("// Persistence of Vision Ray Tracer Scene Description File");
     writer.println("// File: output.pov");
-    writer.println("// Vers: 3.6");
+    writer.println("// Vers: 3.7");
     writer.println("// Desc: [PovRAY exporter] superCAD");
     writer.println("// Date: Hiver 2003");
-    writer.println("//   Summer 2008");
+    writer.println("//   Hiver 2013");
     writer.println("// Auth: Processing.org [exported by superCAD]");
     //writer.println("// Mail: gll@spacekit.ca");
     writer.println("");
@@ -112,7 +106,7 @@ public class PovRAY extends Raw {
     writer.println("//  ------------------------------------------------------------");
     writer.println("");
     writer.println("//--------------------------------------------------------------------------");
-    writer.println("#version 3.5;");
+    writer.println("#version 3.7;");
     writer.println("global_settings {  assumed_gamma 1.0 }");
     writer.println("//--------------------------------------------------------------------------");
     writer.println("");
@@ -134,9 +128,13 @@ public class PovRAY extends Raw {
     writer.println("//\t --( CAMERA )--");
     writer.println("//  ------------------------------------------------------------");
     writer.println("");
-    writer.println("#declare Camera_0 = camera {perspective angle 75\t  // front view");
-    writer.println("\t\t\t\tlocation  <0.0 , 200.0 ,-600.0>");
-    writer.println("\t\t\t\tright\t x*image_width/image_height");
+    writer.println("#declare Camera_0 = camera {perspective angle 60\t  // front view");
+    String location = "\t\t\t\tlocation  <0.0 , 200.0 ,%f>";
+    writer.println(String.format(location, (height/2.0) / Math.tan(PI*30.0 / 180.0)));
+    //writer.println("\t\t\t\tlocation  <0.0 , 200.0 ,-600.0>");
+    String right = "\t\t\t\tright\t x * %.4f";
+    writer.println(String.format(right, (float)width / height));
+    //writer.println("\t\t\t\tright\t x*image_width/image_height");
     writer.println("\t\t\t\tlook_at   <0.0 , 0.4 , 0.0>}");
     writer.println("#declare Camera_1 = camera {ultra_wide_angle angle 90\t   // diagonal view");
     writer.println("\t\t\t\tlocation  <200.0 , 200.5 ,-300.0>");
@@ -242,7 +240,7 @@ public class PovRAY extends Raw {
     writer.println("\t\t\t\t\t}");
     writer.println("");
     writer.println("");
-    writer.println("#declare RedT =\t\ttexture{ pigment{color rgbf<1,0.5,0.1,0.0.5>}");
+    writer.println("#declare RedT =\t\ttexture{ pigment{color rgbf<1,0.5,0.1,0.5>}");
     writer.println("\t\t\t\t\tfinish {ambient 1");
     writer.println("\t\t\t\t\t\tdiffuse 0.5");
     writer.println("\t\t\t\t\t\t//brilliance 0.5");
