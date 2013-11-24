@@ -18,27 +18,18 @@ public class SuperCAD {
   public SuperCAD(){}  
   
   public SuperCAD(PApplet p5){
-    this.p5 = p5;
+    SuperCAD.p5 = p5;
   }
   
   static protected Raw              raw;
   static private SuperCAD           exporter;
-  static public int                 exportMode            = 0;
-  /** Default filenName for exports */
+  static public Mode                 mode            ;
+  /** Default filename for exports */
   static public String              fileName              = "output";
   static private int                recordedFrame         = -1;
   static public boolean             lazyMode              = true;
   
-  static final protected String[][] tokens   = {
-    {"Rhino", "rvb", "r"}, 
-    {"SketchUP", "rb", "s"},
-    {"AutoLISP", "lsp", "a"}, 
-    {"PovRAY", "pov", "p"}, 
-    {"Maya", "mel", "m"}, 
-    {"ObjFile", "obj", "o"}, 
-    {"ArchiCAD", "rvb", "r"}, 
-    {"Rhino", "gdl", "c"}
-  };
+  
   
   static final public byte RHINO    = 0;
   static final public byte SKETCHUP = 1;
@@ -50,8 +41,8 @@ public class SuperCAD {
   
   static public void init(PApplet p5){
     exporter = new SuperCAD(p5);
-    p5.registerPre(exporter);    
-    p5.registerDraw(exporter);
+    p5.registerMethod("pre", exporter);    
+    p5.registerMethod("draw", exporter);
     SuperCAD.formats();
   }
   
@@ -86,28 +77,11 @@ public class SuperCAD {
    * ArchiCAD -- gdl -- c</pre>
    * @param exportMode
    */
-  public static void mode(String exportMode){
-    int id = parse(exportMode);
-    if(id>=0)
-      SuperCAD.exportMode = id;
-    else
-      SuperCAD.exportMode = 0;
-  }  
+   
   
-  public static void mode(int exportMode){    
-    SuperCAD.exportMode = exportMode;
-  }
+
   
-  static private int parse(String s){
-
-    for (int i = 0; i<tokens.length; i++)
-      for (int j = 0; j<tokens[i].length; j++)
-        if(s.toLowerCase().equals(tokens[i][j].toLowerCase()))
-          return i;
-
-    System.err.println(tag+"<"+s+"> is not a recognized export format.");
-    return -1;
-  }  
+ 
   
   
   /////////////////////////////////////////////////////////////
@@ -143,10 +117,10 @@ public class SuperCAD {
   }
   
   /**
-   * @param string
+     * @param exportMode
    */
-  public static void recordNextFrame(String exportMode){
-    mode(exportMode);
+  public static void recordNextFrame(Mode exportMode){
+    mode = exportMode;
     recordNextFrame();
   }
   
@@ -161,20 +135,20 @@ public class SuperCAD {
   
   /**
    * Set to given exportMode and start recording directly. Used in draw() loop.
-   * @param string
+     * @param exportMode
    */
-  public static void record(String exportMode){
-    mode(exportMode);
+  public static void record(Mode exportMode){
+    mode = exportMode;
     recordWithFileName(fileName);
   }
   
-  public static void record(String exportMode, String fileName){
-    mode(exportMode);
+  public static void record(Mode exportMode, String fileName){
+    mode = exportMode;
     recordWithFileName(fileName);
   }
   
   static private void recordWithFileName(String fileName){
-    raw = (Raw)getP5().beginRaw("superCAD."+tokens[exportMode][0],fileName+"."+tokens[exportMode][1]);
+    raw = (Raw)getP5().beginRaw("supercad2."+ mode.className,fileName+"."+mode.ext);
   }
 
   /**
@@ -186,12 +160,12 @@ public class SuperCAD {
       record();
   }
   
-  public static void loop(String exportMode){
+  public static void loop(Mode exportMode){
     if(isRecording())
         record(exportMode);
   }  
   
-  public static void loop(String exportMode, String fileName){
+  public static void loop(Mode exportMode, String fileName){
     if(isRecording())
         record(exportMode,fileName);
   }  
@@ -212,22 +186,7 @@ public class SuperCAD {
    * ObjFile  -- obj -- o
    * ArchiCAD -- gdl -- c</pre>
    */
-  public static void keyCheck(){
-    //Check is valid key
-    boolean isValid = false;
-    for(int i=0; i<tokens.length; i++)
-      if((getP5().key+"").equals(tokens[i][2]))
-        isValid = true;
-    
-    if(!isValid)
-      return;
-    
-    int id = parse(getP5().key+"");
-    if(id!= -1){
-      exportMode = id;
-      SuperCAD.recordNextFrame();
-    }
-  }
+
 
 
   public static void formats(){

@@ -41,6 +41,12 @@ public class ArchiCAD extends Raw {
     return toStringComa(vertex);
   }
 
+    /**
+     *
+     * @param vertex
+     * @return
+     */
+    @Override
   protected String toStringComa(float[] vertex){
     return (float)vertex[X]+", "+(float)vertex[Y]+", "+(float)vertex[Z];
   }
