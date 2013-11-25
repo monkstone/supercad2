@@ -33,7 +33,7 @@ public class SuperCAD {
     static public void init(PApplet p5) {
         exporter = new SuperCAD(p5);
         setActive(true);
-        SuperCAD.formats();
+        formats(); //doesn't work
     }
 
     static private void setActive(boolean active) {
