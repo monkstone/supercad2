@@ -7,7 +7,7 @@ package supercad2;
  */
 public class PovRAY2 extends Raw {
 
-    final String declare = "#declare %s = ";
+    final String declare = "#declare ";
     final String format_vec3 = "<%.4f, %.4f, %.4f>";
     final String format_named_vec3 = "<%.4f, %.4f, %.4f>";
 
@@ -28,67 +28,73 @@ public class PovRAY2 extends Raw {
         System.out.println(SuperCAD.tag + "PovRAY2 (Done)");
     }
 
-    /* (non-Javadoc)
+      /* (non-Javadoc)
      * @see superCAD.Raw#writeLine()
      */
     @Override
     protected void writeLine(int index1, int index2) {
-        writer.print("blob { threshold .65 cylinder {");
-        writer.print(toPovRAYAsPoint3D(vertices[index1]) + ",");
-        writer.print(toPovRAYAsPoint3D(vertices[index2]));
-        writer.println(",P5W 1   pigment { color rgb <1.0, 0.9, 0.8> }  texture{BeigeLwD} } }");
-
+        StringBuilder sb = new StringBuilder(200);
+        sb.append("blob { threshold .65 cylinder {");
+        sb.append(toPovVec3D(vertices[index1])).append(',');
+        sb.append(toPovVec3D(vertices[index2]));
+        sb.append(",P5W 1   pigment { color rgb <1.0, 0.9, 0.8> }  texture{BeigeLwD} } }\n");
+        writer.append(sb);
     }
 
     protected void writeLine2(int index1, int index2) {
-        writer.print("cylinder {");
-        writer.print(toPovRAYAsPoint3D(vertices[index1]) + ",");
-        writer.print(toPovRAYAsPoint3D(vertices[index2]));
-        writer.println(",P5W texture{BeigeLwD} }");
+        StringBuilder sb = new StringBuilder(100);
+        sb.append("cylinder {").append(toPovVec3D(vertices[index1])).append(',');
+        sb.append(toPovVec3D(vertices[index2]));
+        writer.append(sb.append(",P5W texture{BeigeLwD} }\n"));
 
     }
 
-    private String toPovRAYAsPoint3D(float[] vertex) {
-        return "<" + toStringComa(vertex) + ">";
+    private StringBuilder toPovVec3D(float[] vertex) {
+        StringBuilder sb = new StringBuilder(100);
+        sb.append('<').append(vertex[X]).append(", ").append(-vertex[Y]).append(", ");
+        return sb.append(-vertex[Z]).append('>');
     }
 
-    /**
-     *
-     * @param vertex
-     * @return
-     */
-    @Override
-    protected String toStringComa(float[] vertex) {
-        return String.format(format_vec3, vertex[X], -vertex[Y], -vertex[Z]);
+    private StringBuilder toPovVec3D(double x, double y, double z) {
+        StringBuilder sb = new StringBuilder(100);
+        sb.append('<').append(x).append(", ").append(y).append(", ");
+        return sb.append(z).append('>');
     }
+
+//    private StringBuilder toPovVec3D(int[] vertex) {
+//        StringBuilder sb = new StringBuilder(100);
+//        sb.append('<').append(vertex[X]).append(", ").append(-vertex[Y]).append(", ");
+//        return sb.append(-vertex[Z]).append('>');
+//    }
+
 
     /* (non-Javadoc)
      * @see superCAD.Raw#writeTriangle()
      */
     @Override
     protected void writeTriangle() {
-        writer.print("triangle {");
-        writer.print(toPovRAYAsPoint3D(vertices[0]) + ",");
-        writer.print(toPovRAYAsPoint3D(vertices[1]) + ",");
-        writer.print(toPovRAYAsPoint3D(vertices[2]));
-        writer.println(" texture{BeigeT}}");
+        StringBuilder sb = new StringBuilder(300);
+        sb.append("triangle {").append(toPovVec3D(vertices[0])).append(',');
+        sb.append(toPovVec3D(vertices[1])).append(',').append(toPovVec3D(vertices[2]));
+        writer.append(sb.append('\n').append(" texture{BeigeT}}\n"));
         vertexCount = 0;
     }
 
      private void writeDirtyHeader() {
         printHeader();
         writer.println("");
-        printInclude("colors.inc");
+        writer.append(include("colors.inc"));
         declareCamera("default_camera", "perspective", 60, (-height / 2.0) / Math.tan(PI * 30.0 / 180.0), (double) width / height);        
     }
 
     public void declareCamera(String name, String type, int fov, double location, double aspectRatio) {
-        writer.println(String.format(declare, name + "camera {"));
-        writer.println(type);
-        writer.println(String.format("  angle %d", fov));
-        writer.println(String.format(format_named_vec3, "  location ", 0.0, 0.0, location));
-        writer.println(String.format("  right", aspectRatio));
-        writer.println(String.format(format_named_vec3, "  look_at ", 0.0, 0.0, 0.0) + "}");
+        StringBuilder sb = new StringBuilder(200);
+        sb.append(declare).append(name).append(" = camera {\n");
+        sb.append(type).append("  angle ").append(fov).append('\n');
+        sb.append("  location ").append(toPovVec3D(0.0, 0.0, location)).append('\n');
+        sb.append("  right ").append(aspectRatio).append('\n');
+        sb.append("  location ").append(toPovVec3D(0.0, 0.0, location)).append("}\n");
+        writer.append(sb);
     }
 
     public void printHeader() {
@@ -96,7 +102,7 @@ public class PovRAY2 extends Raw {
         writer.println("global_settings {  assumed_gamma 1.0 }");
     }
 
-    public void printInclude(String inc) {
-        writer.println(String.format("#include \"%s\";", inc));
+    public StringBuilder include(String inc) {
+        return new StringBuilder(100).append("#include \"").append(inc).append("\";\n");
     }
 }
