@@ -1,5 +1,7 @@
 package supercad2;
 
+import processing.opengl.PGraphicsOpenGL;
+
 /**
  * superCAD by Guillaume LaBelle (gll@spacekit.ca)
  * http://LaBelle.spaceKIT.ca/superCAD
@@ -133,9 +135,12 @@ public class PovRAY extends Raw {
         writer.println("//\t --( CAMERA )--");
         writer.println("//  ------------------------------------------------------------");
         writer.println("");
-        writer.println("#declare default_camera = camera {perspective angle 60\t  // front view");
+        float FOV=this.cameraFOV; //default value from Processing
+        String default_camera = "#declare default_camera = camera {perspective angle %f\t  // front view";
+        //writer.println("#declare default_camera = camera {perspective angle 60\t  // front view");
+        writer.println(String.format(default_camera, FOV * 90 / PI));
         String location = "\t\t\t\tlocation  <0.0, 0.0 , %.3f>";
-        writer.println(String.format(location, (-height / 2.0) / Math.tan(PI * 30.0 / 180.0)));
+        writer.println(String.format(location, (-height / (2.0 * Math.tan(FOV)))));
         String right = "\t\t\t\tright\t x * %.4f";
         writer.println(String.format(right, (float) width / height));
         writer.println("\t\t\t\tlook_at   <0.0, 0.0, 0.0>}");
