@@ -31,22 +31,21 @@ public class PovRAY2 extends Raw {
     @Override
     protected void writeLine(int index1, int index2) {
         StringBuilder sb = new StringBuilder(200);
-        sb.append("blob { threshold .65 cylinder {");
+        sb.append("my_line (");
         obj.toPovVec3D(sb, vertices[index1]);
         sb.append(',');
         obj.toPovVec3D(sb, vertices[index2]);
-        sb.append(",P5W 1   pigment { Color0 }  texture{Texture0} } }\n");
+        sb.append(")\n");
         writer.append(sb);
     }
 
     protected void writeLine2(int index1, int index2) {
         StringBuilder sb = new StringBuilder(100);
-        sb.append("cylinder {");
+        sb.append("my_line (");
         obj.toPovVec3D(sb, vertices[index1]);
         sb.append(',');
         obj.toPovVec3D(sb, vertices[index2]);
-        writer.append(sb.append(",P5W texture{Texture0} }\n"));
-
+        writer.append(")\n");
     }
 
     /* (non-Javadoc)
@@ -55,13 +54,13 @@ public class PovRAY2 extends Raw {
     @Override
     protected void writeTriangle() {
         StringBuilder sb = new StringBuilder(300);
-        sb.append("triangle {");
+        sb.append("my_triangle (");
         obj.toPovVec3D(sb, vertices[0]);
         sb.append(',');
         obj.toPovVec3D(sb, vertices[1]);
         sb.append(',');
         obj.toPovVec3D(sb, vertices[2]);
-        writer.append(sb.append('\n').append(" texture{Texture1}}\n"));
+        writer.append(sb.append(", ").append("Texture1 )\n"));
         vertexCount = 0;
     }
 
@@ -70,7 +69,8 @@ public class PovRAY2 extends Raw {
     private void writeDirtyHeader() {
         StringBuilder sb = new StringBuilder(700);        
         obj.version(sb, 3.7);
-        obj.global(sb, 1.0);
+        //obj.global(sb, 1.0);
+        obj.globalRadiosity(sb);
         String[] includes = {"colors.inc", "textures.inc", "functions.inc"};
         obj.includes(sb, includes);        
         obj.aspectRatio(sb, width, height);
@@ -221,6 +221,19 @@ public class PovRAY2 extends Raw {
         writer.println("//  ------------------------------------------------------------");
         writer.println("#declare P5W = .1;\t\t //change this for wireframe size");
         writer.println("");
+        sb = new StringBuilder(300);
+        obj.macro(sb, 
+                "my_line", 
+                "x1, y1, z1, x2, y2, z2", 
+                "blob { threshold 0.65 cylinder { <x1, y1, z1>,<x2, y2, z2>, P5W 1 pigment{ Color0 } texture{ Texture0 } } }"
+        );
+        obj.macro(sb, 
+                "my_triangle", 
+                "x1, y1, z1, x2, y2, z2, x3, y3, z3, texture0", 
+                "triangle{<x1, y1, z1>,<x2, y2,z2>,<x3, y3, z3> \n" +
+                "     texture{ texture0 } } "
+        );
+        writer.append(sb);
     }
 
 }

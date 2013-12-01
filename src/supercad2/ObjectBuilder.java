@@ -12,12 +12,19 @@ import java.text.DecimalFormat;
  * @author foo
  */
 public class ObjectBuilder {
+
     static final String AMBIENT = "ambient ";
     static final String DIFFUSE = "diffuse ";
     static final String PHONG = "phong ";
     static final String PHONG_SIZE = "phong_size ";
     static final String FOV = "FOV";
+    static final String MACRO = "#macro ";
+    static final String END_MACRO = "#end ";
     static final String GLOBAL = "global_settings{\n    assumed_gamma ";
+    static final String GLOBAL_RADIOSITY = "global_settings{\n    assumed_gamma 1.0\n";
+    static final String RADIOSITY = "    radiosity{\n    pretrace_start 0.04\n"
+            + "    pretrace_end 0.01\n    count 200\n    recursion_limit 3\n    nearest_count 10\n"
+            + "    error_bound 0.5\n  }\n}\n";
     static final String ZDEPTH = "ZDEPTH";
     static final String ASPECT_RATIO = "ASPECT_RATIO";
     static final String WIDTH = "WIDTH";
@@ -38,7 +45,8 @@ public class ObjectBuilder {
     static final char SPC = ' ';
     static final String TAB = "   ";
     DecimalFormat df2, df1, df4;
-    public ObjectBuilder(){
+
+    public ObjectBuilder() {
         df4 = new DecimalFormat("#.####");
         df2 = new DecimalFormat("#.##");
         df1 = new DecimalFormat("#.#");
@@ -53,14 +61,17 @@ public class ObjectBuilder {
     private void povInclude(StringBuilder sb, String include) {
         sb.append(POV_INCLUDE).append(include).append(QUOTE).append(EOL);
     }
-    
-    
-    public StringBuilder version(StringBuilder sb, double vers){
+
+    public StringBuilder version(StringBuilder sb, double vers) {
         return sb.append(VERSION).append(vers).append(SEMI).append(EOL);
     }
-    
-     public StringBuilder global(StringBuilder sb, double gamma){
+
+    public StringBuilder global(StringBuilder sb, double gamma) {
         return sb.append(GLOBAL).append(df1.format(gamma)).append(END_CURLY).append(EOL);
+    }
+
+    public StringBuilder globalRadiosity(StringBuilder sb) {
+        return sb.append(GLOBAL_RADIOSITY).append(RADIOSITY).append(EOL);
     }
 
     public StringBuilder includes(StringBuilder sb, String[] include) {
@@ -74,13 +85,13 @@ public class ObjectBuilder {
         sb.append(name).append(" <").append(a).append(", ").append(b).append(", ").append(c);
         return sb.append(">");
     }
-    
+
     private StringBuilder vector4(StringBuilder sb, String name, String a, String b, String c, String ft) {
         sb.append(name).append(" <").append(a).append(", ").append(b).append(", ").append(c).append(", ").append(ft);
         return sb.append(">");
     }
-    
-     private StringBuilder vector5(StringBuilder sb, String name, String a, String b, String c, String f, String t) {
+
+    private StringBuilder vector5(StringBuilder sb, String name, String a, String b, String c, String f, String t) {
         sb.append(name).append(" <").append(a).append(", ").append(b).append(", ").append(c).append(", ").append(f);
         return sb.append(", ").append(f).append(">");
     }
@@ -89,8 +100,8 @@ public class ObjectBuilder {
         String x = df2.format(vertex[0]);
         String y = df2.format(-vertex[1]);
         String z = df2.format(-vertex[2]);
-        sb.append('<').append(x).append(", ").append(y).append(", ");
-        return sb.append(z).append('>');
+        sb.append(x).append(", ").append(y).append(", ");
+        return sb.append(z);
     }
 
     protected StringBuilder toPovVec3D(StringBuilder sb, double x, double y, double z) {
@@ -106,14 +117,14 @@ public class ObjectBuilder {
         vector(sb.append(TAB), "look_at", "0", "0", "0").append(EOL);
         return sb.append(END_CURLY).append(EOL);
     }
-    
+
     public StringBuilder declareTexture(StringBuilder sb, String name, String pigment, String finish) {
         sb.append(POV_DEFINE).append(name).append(EQUAL).append(" texture {\n");
         sb.append(TAB).append("pigment{").append(pigment).append(END_CURLY);
         sb.append(TAB).append("finish{").append(finish).append(END_CURLY);
         return sb.append(END_CURLY);
     }
-    
+
     public StringBuilder declareColor(StringBuilder sb, String name, double r, double g, double b) {
         sb.append(POV_DEFINE).append(name).append(EQUAL);
         String red = df2.format(r);
@@ -122,7 +133,7 @@ public class ObjectBuilder {
         vector(sb, " rgb", red, green, blue);
         return sb.append(SEMI);
     }
-    
+
     public StringBuilder declareColor(StringBuilder sb, String name, double r, double g, double b, double f, double t) {
         sb.append(POV_DEFINE).append(name).append(EQUAL);
         String red = df2.format(r);
@@ -133,7 +144,7 @@ public class ObjectBuilder {
         vector5(sb, " rgbft", red, green, blue, filter, transmit);
         return sb.append(SEMI);
     }
-    
+
     public StringBuilder declareColorF(StringBuilder sb, String name, double r, double g, double b, double f) {
         sb.append(POV_DEFINE).append(name).append(EQUAL);
         String red = df2.format(r);
@@ -143,7 +154,7 @@ public class ObjectBuilder {
         vector4(sb, " rgbf", red, green, blue, filter);
         return sb.append(SEMI);
     }
-    
+
     public StringBuilder declareColorT(StringBuilder sb, String name, double r, double g, double b, double t) {
         sb.append(POV_DEFINE).append(name).append(EQUAL);
         String red = df2.format(r);
@@ -153,7 +164,7 @@ public class ObjectBuilder {
         vector4(sb, " rgbt", red, green, blue, transmit);
         return sb.append(SEMI);
     }
-    
+
     public StringBuilder declarePigment(StringBuilder sb, String name, double r, double g, double b) {
         sb.append(POV_DEFINE).append(name).append(EQUAL).append(" pigment { ");
         String red = df2.format(r);
@@ -162,21 +173,21 @@ public class ObjectBuilder {
         vector(sb, "rgb", red, green, blue);
         return sb.append(END_CURL).append(EOL);
     }
-    
+
     public StringBuilder declarePigment(StringBuilder sb, String name, String color) {
         sb.append(POV_DEFINE).append(name).append(EQUAL).append(" pigment { ");
         return sb.append(color).append(END_CURL).append(EOL);
     }
-    
+
     public StringBuilder declareFinish(StringBuilder sb, String name, double ambient, double diffuse) {
         sb.append(POV_DEFINE).append(name).append(EQUAL).append(" finish {");
         sb.append(AMBIENT).append(ambient).append(SPC).append(DIFFUSE).append(diffuse);
         return sb.append(END_CURL).append(EOL);
     }
-    
+
     public StringBuilder declareFinish(StringBuilder sb, String name, double ambient, double diffuse, double phongSize, double phong) {
         sb.append(POV_DEFINE).append(name).append(EQUAL).append(" finish {");
-        sb.append(AMBIENT).append(ambient).append(SPC).append(DIFFUSE).append(diffuse).append(SPC) ;
+        sb.append(AMBIENT).append(ambient).append(SPC).append(DIFFUSE).append(diffuse).append(SPC);
         sb.append(PHONG_SIZE).append(ambient).append(SPC).append(PHONG).append(diffuse);
         return sb.append(END_CURL).append(EOL);
     }
@@ -200,6 +211,11 @@ public class ObjectBuilder {
     public StringBuilder fov(StringBuilder sb, double fov) {
         String cfov = df1.format(fov * 90 / Math.PI);
         return povDefine(sb, FOV, cfov);
+    }
+
+    public StringBuilder macro(StringBuilder sb, String name, String values, String logic) {
+        sb.append(MACRO).append(name).append(" (").append(values).append(" )\n");
+        return sb.append(logic).append(EOL).append(END_MACRO).append(EOL).append(EOL);
     }
 
 }
