@@ -82,7 +82,7 @@ public class FTest extends PApplet {
                 cadSoftware = Mode.AUTOLISP;
                 break;
             case 'p':
-                cadSoftware = Mode.POVRAY;
+                cadSoftware = Mode.POVRAY2;
                 break;
             case 'm':
                 cadSoftware = Mode.MAYA;

@@ -140,7 +140,7 @@ public class Test extends PApplet {
                 cadSoftware = Mode.AUTOLISP;
                 break;
             case 'p':
-                cadSoftware = Mode.POVRAY;
+                cadSoftware = Mode.POVRAY2;
                 break;
             case 'm':
                 cadSoftware = Mode.MAYA;
@@ -156,6 +156,6 @@ public class Test extends PApplet {
     }
 
     public static void main(String[] args) {
-        PApplet.main("superCAD.Test");
+        PApplet.main("supercad2.Test");
     }
 }
