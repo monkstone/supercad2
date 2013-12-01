@@ -1,4 +1,3 @@
-
 import supercad2.*;
 
 
@@ -70,7 +69,7 @@ void keyPressed() {
     cad = Mode.AUTOLISP;
     break;
   case 'p':
-    cad = Mode.POVRAY;
+    cad = Mode.POVRAY2;
     break;
   case 'm':
     cad = Mode.MAYA;
