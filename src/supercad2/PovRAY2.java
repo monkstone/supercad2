@@ -23,7 +23,7 @@ public class PovRAY2 extends Raw {
     public PovRAY2(){
         try {
             obj = new ObjectBuilder();
-            dataFile = new File(System.getProperty("user.home") + "/data.inc");
+            dataFile = new File(System.getProperty("user.home") + File.separator + "data.inc");
             dataWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(dataFile, true), "UTF-8"));
         } catch (UnsupportedEncodingException | FileNotFoundException ex) {
             Logger.getLogger(PovRAY2.class.getName()).log(Level.SEVERE, null, ex);
