@@ -73,11 +73,15 @@ public class ObjectBuilder {
     public StringBuilder globalRadiosity(StringBuilder sb) {
         return sb.append(GLOBAL_RADIOSITY).append(RADIOSITY).append(EOL);
     }
-
     public StringBuilder includes(StringBuilder sb, String[] include) {
         for (String inc : include) {
             povInclude(sb, inc);
         }
+        return sb.append(EOL);
+    }
+
+    public StringBuilder include(StringBuilder sb, String include) {        
+            povInclude(sb, include);
         return sb.append(EOL);
     }
 

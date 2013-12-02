@@ -1,5 +1,14 @@
 package supercad2;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * superCAD by Guillaume LaBelle (gll@spacekit.ca)
  * http://LaBelle.spaceKIT.ca/superCAD
@@ -7,7 +16,19 @@ package supercad2;
  * This code is provided as is, without any warranty.
  */
 public class PovRAY2 extends Raw {
-    static ObjectBuilder obj = new ObjectBuilder();
+    ObjectBuilder obj;
+    PrintWriter dataWriter;
+    File dataFile;
+    
+    public PovRAY2(){
+        try {
+            obj = new ObjectBuilder();
+            dataFile = new File(System.getProperty("user.home") + "/data.inc");
+            dataWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(dataFile, true), "UTF-8"));
+        } catch (UnsupportedEncodingException | FileNotFoundException ex) {
+            Logger.getLogger(PovRAY2.class.getName()).log(Level.SEVERE, null, ex);
+        }
+}
     /* (non-Javadoc)
      * @see superCAD.Raw#writeHeader()
      */
@@ -21,7 +42,8 @@ public class PovRAY2 extends Raw {
      */
     @Override
     protected void writeFooter() {
-        //No Footer
+        dataWriter.flush();
+        dataWriter.close();
         System.out.println(SuperCAD.tag + "PovRAY2 (Done)");
     }
 
@@ -36,7 +58,7 @@ public class PovRAY2 extends Raw {
         sb.append(',');
         obj.toPovVec3D(sb, vertices[index2]);
         sb.append(")\n");
-        writer.append(sb);
+        dataWriter.append(sb);
     }
 
     protected void writeLine2(int index1, int index2) {
@@ -45,7 +67,7 @@ public class PovRAY2 extends Raw {
         obj.toPovVec3D(sb, vertices[index1]);
         sb.append(',');
         obj.toPovVec3D(sb, vertices[index2]);
-        writer.append(")\n");
+        dataWriter.append(")\n");
     }
 
     /* (non-Javadoc)
@@ -60,7 +82,7 @@ public class PovRAY2 extends Raw {
         obj.toPovVec3D(sb, vertices[1]);
         sb.append(',');
         obj.toPovVec3D(sb, vertices[2]);
-        writer.append(sb.append(", ").append("Texture1 )\n"));
+        dataWriter.append(sb.append(", ").append("Texture1 )\n"));
         vertexCount = 0;
     }
 
@@ -233,7 +255,8 @@ public class PovRAY2 extends Raw {
                 "triangle{<x1, y1, z1>,<x2, y2,z2>,<x3, y3, z3> \n" +
                 "     texture{ texture0 } } "
         );
-        writer.append(sb);
+        obj.include(sb, dataFile.getAbsolutePath());
+        writer.println(sb);
     }
 
 }

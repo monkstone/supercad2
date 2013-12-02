@@ -34,6 +34,8 @@ package supercad2;
 
 
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import processing.opengl.PGraphics3D;
 
 public abstract class Raw extends PGraphics3D {
@@ -86,12 +88,12 @@ public abstract class Raw extends PGraphics3D {
   @Override
   public void beginDraw(){
     if(writer==null){
-      try{
-        writer = new PrintWriter(new FileWriter(file));
-      }
-      catch (IOException e){
-        throw new RuntimeException(e); // java 1.4+
-      }
+        try {
+            writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file, true), "UTF-8"));
+        } catch (UnsupportedEncodingException | FileNotFoundException ex) {
+            Logger.getLogger(Raw.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
       writeHeader();
     }
   }
