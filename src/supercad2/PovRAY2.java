@@ -41,6 +41,7 @@ public class PovRAY2 extends Raw {
         StringBuilder sb = new StringBuilder(100);
         String povString = povFile.getAbsolutePath();
         String povimage = povString.replace("pov", "png");
+        sb.append("Display=On").append(ObjectBuilder.EOL);
         sb.append("Quality=").append(9).append(ObjectBuilder.EOL);
         sb.append("Height=").append(height).append(ObjectBuilder.EOL);
         sb.append("Width=").append(width).append(ObjectBuilder.EOL);

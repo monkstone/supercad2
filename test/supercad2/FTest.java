@@ -5,12 +5,14 @@
  */
 package supercad2;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import processing.core.PApplet;
 import static processing.core.PConstants.P3D;
 import processing.core.PVector;
 
 public class FTest extends PApplet {
-
 
     Mode cadSoftware;
     boolean record = false;
@@ -55,7 +57,7 @@ public class FTest extends PApplet {
     public void fTest() {  // encapsulate initial processing sketch in a function
         translate(width / 2, height / 2, -width / 3);
         fill(255, 0, 0);
-        translate(0, -60, 0);      
+        translate(0, -60, 0);
         box(120);
         translate(0, -120, 0);
         box(120);
@@ -92,6 +94,14 @@ public class FTest extends PApplet {
                 break;
             case 'c':
                 cadSoftware = Mode.ARCHICAD;
+                break;
+            case 't':
+                String[] ini = {"/usr/bin/povray", "output.ini"};
+                try {
+                    Process p = Runtime.getRuntime().exec(ini);
+                } catch (IOException ex) {
+                    Logger.getLogger(FTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 break;
         }
         record = true;
