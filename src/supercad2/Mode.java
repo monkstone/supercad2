@@ -12,7 +12,7 @@ public enum Mode {
     MAYA("Maya", "mel"),
     OBJ("ObjFile", "obj"),
     POVRAY("PovRAY", "pov"),
-    POVRAY2("PovRAY2", "pov"),
+    POVRAY2("PovRAY2", "ini"),
     RHINO("Rhino", "rvb"),
     SKETCH_UP("SketchUP", "rb");
     public String className;
