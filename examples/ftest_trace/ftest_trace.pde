@@ -70,7 +70,7 @@ void keyPressed() {
     cad = Mode.AUTOLISP;
     break;
   case 'p':
-    cad = Mode.POVRAY;
+    cad = Mode.POVRAY2;
     break;
   case 'm':
     cad = Mode.MAYA;
@@ -80,6 +80,11 @@ void keyPressed() {
     break;
   case 'c':
     cad = Mode.ARCHICAD;
+    break;
+  case 't':
+    noLoop();
+    String[] ini = { "/usr/bin/povray", sketchPath("output.ini")};
+    open(ini);
     break;
   }
   record = true;
