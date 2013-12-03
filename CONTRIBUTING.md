@@ -10,7 +10,7 @@ Here are some ways *you* can contribute:
 * by closing [issues][]
 * by proselytizing supercad2, we need more champions
 * by supporting [Processing.org][], nothing to do with us but we rely on them
-
+* by contributing to[Povray.org][], development
 
 ## Submitting an Issue
 We use the [GitHub issue tracker][issues] to track bugs and features. Before
@@ -30,3 +30,4 @@ the bug, and operating system.
 [fork]: http://help.github.com/fork-a-repo/
 [pr]: http://help.github.com/send-pull-requests/
 [processing.org]: http://processing.org/foundation/
+[povray.org]: https://github.com/POV-Ray/povray
