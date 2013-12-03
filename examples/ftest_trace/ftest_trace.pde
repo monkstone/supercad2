@@ -1,25 +1,22 @@
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import supercad2.*;
-
 
 Mode cad;
 boolean record = false;
+boolean displayImage = false;
 
 void setup() {
   size(800, 600, P3D);
 }
 
-void draw() {
-  background(0);
-  configureLights();
-  //translate(width / 2, height / 2, -300);
-  //noStroke();
-  rotateY(QUARTER_PI);
+void draw() {  
   if (record) {
     beginRaw("supercad2." + cad.className, "output." + cad.ext);
   }
+  
   fTest();
-
+  
   if (record) {
     endRaw();
     record = false;
@@ -42,6 +39,9 @@ PVector midPoint(PVector a, PVector b) {
 
 void fTest() {  // encapsulate initial processing sketch in a function
   translate(width / 2, height / 2, -width / 3);
+  background(0);
+  configureLights();
+  rotateY(QUARTER_PI);
   fill(255, 0, 0);
   translate(0, -60, 0);      
   box(120);
@@ -81,12 +81,19 @@ void keyPressed() {
   case 'c':
     cad = Mode.ARCHICAD;
     break;
-  case 't':
-    noLoop();
+  case 't':         // start povray
     String[] ini = { "/usr/bin/povray", sketchPath("output.ini")};
-    open(ini);
+    ProcessBuilder pb = new ProcessBuilder(ini);
+    pb.inheritIO(); // redirect povray output to processing console
+    try {
+      pb.start();
+    } 
+    catch (IOException ex) {
+      Logger.getLogger(ftest_trace.class.getName()).log(Level.SEVERE, null, ex);
+    }
     break;
   }
   record = true;
 }
+
 

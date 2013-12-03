@@ -5,17 +5,20 @@
  */
 package supercad2;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import processing.core.PApplet;
 import static processing.core.PConstants.P3D;
+import processing.core.PImage;
 import processing.core.PVector;
 
 public class FTest extends PApplet {
 
     Mode cadSoftware;
     boolean record = false;
+    boolean displayImage = false;
 
     @Override
     public void setup() {
@@ -24,15 +27,16 @@ public class FTest extends PApplet {
 
     @Override
     public void draw() {
-        background(0);
-        configureLights();
-        //translate(width / 2, height / 2, -300);
-        //noStroke();
-        rotateY(QUARTER_PI);
+
         if (record) {
             beginRaw("supercad2." + cadSoftware.className, "output." + cadSoftware.ext);
         }
-        fTest();
+        if (displayImage) {
+            PImage img = loadImage(System.getProperty("user.home") + File.separator + "output.png");
+            background(img);
+        } else {
+            fTest();
+        }
 
         if (record) {
             endRaw();
@@ -55,7 +59,10 @@ public class FTest extends PApplet {
     }
 
     public void fTest() {  // encapsulate initial processing sketch in a function
+        background(0);
         translate(width / 2, height / 2, -width / 3);
+        configureLights();
+        rotateY(QUARTER_PI);
         fill(255, 0, 0);
         translate(0, -60, 0);
         box(120);
@@ -96,9 +103,12 @@ public class FTest extends PApplet {
                 cadSoftware = Mode.ARCHICAD;
                 break;
             case 't':
-                String[] ini = {"/usr/bin/povray", "output.ini"};
+                noLoop();
+                String[] ini = {"/usr/bin/povray", sketchPath("output.ini")};
+                ProcessBuilder pb = new ProcessBuilder(ini);
+                pb.inheritIO();
                 try {
-                    Process p = Runtime.getRuntime().exec(ini);
+                    pb.start();
                 } catch (IOException ex) {
                     Logger.getLogger(FTest.class.getName()).log(Level.SEVERE, null, ex);
                 }
