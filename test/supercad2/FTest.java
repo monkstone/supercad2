@@ -16,31 +16,31 @@ import processing.core.PVector;
 
 public class FTest extends PApplet {
 
+    Status status;
     Mode cadSoftware;
-    boolean record = false;
-    boolean displayImage = false;
+
 
     @Override
     public void setup() {
         size(800, 600, P3D);
+        status = Status.START;
     }
 
     @Override
     public void draw() {
-
-        if (record) {
-            beginRaw("supercad2." + cadSoftware.className, "output." + cadSoftware.ext);
-        }
-        if (displayImage) {
+        if (status == Status.TRACED) {
             PImage img = loadImage(System.getProperty("user.home") + File.separator + "output.png");
             background(img);
         } else {
+            if (status == Status.RECORD) {
+                beginRaw("supercad2." + cadSoftware.className, "output." + cadSoftware.ext);
+                status = Status.RECORDING;
+            }
             fTest();
-        }
-
-        if (record) {
-            endRaw();
-            record = false;
+            if (status == Status.RECORDING) {
+                endRaw();                
+                status = Status.RECORDED;
+            }
         }
     }
 
@@ -83,38 +83,53 @@ public class FTest extends PApplet {
         switch (key) {
             case 'r':
                 cadSoftware = Mode.RHINO;
+                status = Status.RECORD;
                 break;
             case 's':
                 cadSoftware = Mode.SKETCH_UP;
+                status = Status.RECORD;
                 break;
             case 'a':
                 cadSoftware = Mode.AUTOLISP;
+                status = Status.RECORD;                
                 break;
             case 'p':
-                cadSoftware = Mode.POVRAY2;
+                if (status == Status.START){
+                    cadSoftware = Mode.POVRAY2;
+                    status = Status.RECORD;
+                } 
                 break;
             case 'm':
                 cadSoftware = Mode.MAYA;
+                status = Status.RECORD;
                 break;
             case 'o':
                 cadSoftware = Mode.OBJ;
+                status = Status.RECORD;
                 break;
             case 'c':
                 cadSoftware = Mode.ARCHICAD;
+                status = Status.RECORD;
                 break;
             case 't':
-                noLoop();
-                String[] ini = {"/usr/bin/povray", sketchPath("output.ini")};
-                ProcessBuilder pb = new ProcessBuilder(ini);
-                pb.inheritIO();
-                try {
-                    pb.start();
-                } catch (IOException ex) {
-                    Logger.getLogger(FTest.class.getName()).log(Level.SEVERE, null, ex);
+                if (status == Status.RECORDED) {
+                    String[] ini = {"/usr/bin/povray", sketchPath("output.ini")};
+                    ProcessBuilder pb = new ProcessBuilder(ini);
+                    Process povray;
+                    pb.inheritIO();
+                    try {
+                        povray = pb.start();
+                        status = Status.TRACING;
+                        if (status == Status.TRACING && povray.waitFor() == 0) {
+                            status = Status.TRACED;
+                        }
+                    } catch (IOException | InterruptedException ex) {
+                        Logger.getLogger(FTest.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 break;
+
         }
-        record = true;
     }
 
     public static void main(String[] args) {
