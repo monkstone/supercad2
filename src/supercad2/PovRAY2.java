@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * superCAD by Guillaume LaBelle (gll@spacekit.ca)
  * http://LaBelle.spaceKIT.ca/superCAD
@@ -16,13 +17,14 @@ import java.util.logging.Logger;
  * This code is provided as is, without any warranty.
  */
 public class PovRAY2 extends Raw {
+
     ObjectBuilder obj;
     PrintWriter dataWriter;
     PrintWriter povWriter;
     File dataFile;
     File povFile;
-    
-    public PovRAY2(){
+
+    public PovRAY2() {
         try {
             obj = new ObjectBuilder();
             dataFile = new File(System.getProperty("user.home") + File.separator + "data.inc");
@@ -32,10 +34,11 @@ public class PovRAY2 extends Raw {
         } catch (UnsupportedEncodingException | FileNotFoundException ex) {
             Logger.getLogger(PovRAY2.class.getName()).log(Level.SEVERE, null, ex);
         }
-}
+    }
     /* (non-Javadoc)
      * @see superCAD.Raw#writeHeader()
      */
+
     @Override
     protected void writeHeader() {
         StringBuilder sb = new StringBuilder(100);
@@ -63,7 +66,7 @@ public class PovRAY2 extends Raw {
         System.out.println(SuperCAD.tag + "PovRAY2 (Done)");
     }
 
-      /* (non-Javadoc)
+    /* (non-Javadoc)
      * @see superCAD.Raw#writeLine()
      */
     @Override
@@ -105,17 +108,18 @@ public class PovRAY2 extends Raw {
     //TODO: As said, dirty header is dirty. It should be moved to an external file.
     //    but now, I avoid file access problems...
     private void writeDirtyHeader() {
-        StringBuilder sb = new StringBuilder(700);        
+
+        StringBuilder sb = new StringBuilder(700);
         obj.version(sb, 3.7);
         //obj.global(sb, 1.0);
         obj.globalRadiosity(sb);
         String[] includes = {"colors.inc", "textures.inc", "functions.inc"};
-        obj.includes(sb, includes);        
+        obj.includes(sb, includes);
         obj.aspectRatio(sb, width, height);
-        obj.fov(sb, this.cameraFOV);
-        obj.zdepth(sb, height, this.cameraFOV);
+        obj.fov(sb, 0.5235988);              // fov of 30 degrees in radians
+        obj.zdepth(sb, height, 0.5235988);
         obj.declareCamera(sb, "default_camera");
-        obj.declareColor(sb, "Color0", 0.8, 0.1, 0.1); 
+        obj.declareColor(sb, "Color0", 0.8, 0.1, 0.1);
         obj.declareColor(sb, "Color1", 0.8, 0.1, 0.1);
         obj.declarePigment(sb, "RedP", "Color0");
         obj.declarePigment(sb, "BlueP", "Color1");
@@ -260,21 +264,23 @@ public class PovRAY2 extends Raw {
         povWriter.println("#declare P5W = .1;\t\t //change this for wireframe size");
         povWriter.println("");
         sb = new StringBuilder(300);
-        obj.macro(sb, 
-                "my_line", 
-                "x1, y1, z1, x2, y2, z2",  // these are macro parameters
+        obj.macro(sb,
+                "my_line",
+                "x1, y1, z1, x2, y2, z2", // these are macro parameters
                 "blob { threshold 0.65 cylinder { <x1, y1, z1>,<x2, y2, z2>, P5W 1 pigment{ Color0 } texture{ Texture0 } } }"
         );
-        obj.macro(sb, 
-                "my_triangle", 
+        obj.macro(sb,
+                "my_triangle",
                 "x1, y1, z1, x2, y2, z2, x3, y3, z3, texture0", // these are macro parameters
-                "triangle{<x1, y1, z1>,<x2, y2,z2>,<x3, y3, z3> \n" +
-                "     texture{ texture0 } } "
+                "triangle{<x1, y1, z1>,<x2, y2,z2>,<x3, y3, z3> \n"
+                + "     texture{ texture0 } } "
         );
         obj.include(sb, dataFile.getAbsolutePath());
         povWriter.println(sb);
         povWriter.flush();
         povWriter.close();
     }
+
+    
 
 }

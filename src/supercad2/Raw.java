@@ -36,9 +36,10 @@ package supercad2;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import processing.opengl.PGraphics3D;
+import processing.core.PMatrix3D;
+import processing.core.PGraphics;
 
-public abstract class Raw extends PGraphics3D {
+public abstract class Raw extends PGraphics {
 
   int         currentLayer = 0;
 
@@ -62,6 +63,30 @@ public abstract class Raw extends PGraphics3D {
       System.out.println(SuperCAD.tag+"<"+path+"> (open)");
     }
   }
+  
+  @Override
+   public boolean displayable() {
+    return false;  // just in case someone wants to use this on its own
+  }
+
+  
+  @Override
+  public boolean is2D() {
+    return false;
+  }
+
+  
+  @Override
+  public boolean is3D() {
+    return true;
+  }
+  
+ 
+  @Override
+  public boolean isGL() {
+    return false;
+  }
+
 
 
   @Override
@@ -80,10 +105,8 @@ public abstract class Raw extends PGraphics3D {
   }
 
 
-  @Override
-  public boolean displayable(){
-    return false; // just in case someone wants to use this on its own
-  }
+
+
 
   @Override
   public void beginDraw(){
@@ -198,7 +221,14 @@ public abstract class Raw extends PGraphics3D {
     }
 
   }
-
+@Override
+    public void sphere(float r) {
+            PMatrix3D tr = (PMatrix3D) getMatrix();
+            StringBuilder sb = new StringBuilder(100);
+            sb.append("sphere{<").append(tr.m03).append(", ").append(tr.m13).append(", ").append(tr.m13).append(">, ");
+            sb.append(r).append("\n texture{ Texture0 }}\n");
+            System.out.append(sb);        
+    }
 
   /**
    * @param layerName
